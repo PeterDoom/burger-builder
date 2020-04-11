@@ -3,70 +3,146 @@ import Button from "../../../components/UI/Button/Button";
 import classes from "./ContactData.module.css";
 import axios from "../../../axios-orders";
 import Spinner from "../../../components/UI/Spinner/Spinner";
+import Input from "../../../components/UI/Input/Input";
 
 class ContactData extends Component {
     state = {
-        name: "",
-        email: "",
-        address: {
-            street: "",
-            postalCode: ""
+        orderForm: {
+            name: {
+                elementType: "input",
+                elementConfig: {
+                    type: "text",
+                    placeholder: "Your Name",
+                },
+                value: "",
+                validation: {
+                    required: true
+                },
+                valid: false
+            },
+            street: {
+                elementType: "input",
+                elementConfig: {
+                    type: "text",
+                    placeholder: "Street",
+                },
+                value: "",
+                validation: {
+                    required: true
+                },
+                valid: false
+            },
+            zipCode: {
+                elementType: "input",
+                elementConfig: {
+                    type: "text",
+                    placeholder: "ZIP Code",
+                },
+                value: "",
+                validation: {
+                    required: true
+                },
+                valid: false
+            },
+            email: {
+                elementType: "input",
+                elementConfig: {
+                    type: "text",
+                    placeholder: "Email",
+                },
+                value: "",
+                validation: {
+                    required: true
+                },
+                valid: false
+            },
+            deliveryMethod: {
+                elementType: 'select',
+                elementConfig: {
+                    options: [
+                        {value: 'fastest', displayValue: 'Fastest'},
+                        {value: 'cheapest', displayValue: 'Cheapest'}
+                    ]
+                },
+                value: '',
+                valid: true
+            },
         },
-        loading: false
+        loading: false,
     };
 
-    orderHandler = event => {
+    orderHandler = (event) => {
         event.preventDefault();
         console.log(this.props.ingredients, this.props.price);
 
         this.setState({ loading: true });
+        const formData = {}
+
+        for (let formElementIdentifier in this.state.orderForm) {
+            formData[formElementIdentifier] = this.state.orderForm[formElementIdentifier].value
+        }
+
         const order = {
             ingredients: this.props.ingredients,
             price: this.props.price,
-            customer: {
-                name: "Peter Doom",
-                address: "SomePlace North"
-            }
+            orderData: formData
         };
         axios
             .post("/orders.json", order)
-            .then(response => {
+            .then((response) => {
                 this.setState({ loading: false, purchasing: false });
-                this.props.history.push("/")
-            }
-            )
-            .catch(error => {
+                this.props.history.push("/");
+            })
+            .catch((error) => {
                 this.setState({ loading: false, purchasing: false });
             });
     };
 
+    checkValidity(value, rules) {
+        let isValid = false;
+
+        if (rules.required){
+            isValid = value.trim() !=='';
+        }
+
+        return isValid
+    }
+
+
+    inputChangedHandler = (event, inputIdentifier) => {
+
+        const updatedOrderForm = {
+            ...this.state.orderForm
+        };
+        const updatedFormElement = {...updatedOrderForm[inputIdentifier]};
+        updatedFormElement.value = event.target.value;
+        updatedFormElement.valid = this.checkValidity(updatedFormElement.value, updatedFormElement.validation)
+        updatedOrderForm[inputIdentifier] = updatedFormElement
+        this.setState({orderForm: updatedOrderForm})
+    }
+
     render() {
+        const formElementsArray = [];
+        for (let key in this.state.orderForm) {
+            formElementsArray.push({
+                id: key,
+                config: this.state.orderForm[key],
+            });
+        }
+
         let form = (
-            <form>
-                <input
-                    className={classes.Input}
-                    type="text"
-                    name="name"
-                    placeholder="Your Name Here"
-                />
-                <input
-                    className={classes.Input}
-                    type="email"
-                    name="email"
-                    placeholder="Your email Here"
-                />
-                <input
-                    className={classes.Input}
-                    type="text"
-                    name="street"
-                    placeholder="Your street Here"
-                />
-                <input
-                    className={classes.Input}
-                    type="text"
-                    name="postalCode"
-                    placeholder="Your PostalCode Here"
-                />
+            <form onSubmit={this.orderHandler}>
+                {formElementsArray.map((formElement) => (
+                    <Input
+                    key = {formElement.id}
+                    elementType={formElement.config.elementType} 
+                    elementConfig={formElement.config.elementConfig}
+                    value={formElement.config.value}
+                    invalid = {!formElement.config.valid}
+                    shouldValidate = {formElement.config.validation}
+                    changed={(event) => this.inputChangedHandler(event, formElement.id)} />
+                ))}
+
                 <Button btnType="Success" clicked={this.orderHandler}>
                     ORDER
                 </Button>
