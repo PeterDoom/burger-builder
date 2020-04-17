@@ -58,7 +58,7 @@ class ContactData extends Component {
                     required: true,
                 },
                 valid: false,
-                touched: false
+                touched: false,
             },
             deliveryMethod: {
                 elementType: "select",
@@ -73,7 +73,7 @@ class ContactData extends Component {
                 valid: true,
             },
         },
-        formIsValid : false,
+        formIsValid: false,
         loading: false,
     };
 
@@ -126,15 +126,18 @@ class ContactData extends Component {
             updatedFormElement.value,
             updatedFormElement.validation
         );
-        updatedFormElement.touched = true
+        updatedFormElement.touched = true;
         let formIsValid = true;
-        
-        for (let inputId in updatedOrderForm){
+
+        for (let inputId in updatedOrderForm) {
             formIsValid = updatedOrderForm[inputId].valid && formIsValid;
         }
 
         updatedOrderForm[inputIdentifier] = updatedFormElement;
-        this.setState({ orderForm: updatedOrderForm, formIsValid: formIsValid });
+        this.setState({
+            orderForm: updatedOrderForm,
+            formIsValid: formIsValid,
+        });
     };
 
     render() {
@@ -156,21 +159,25 @@ class ContactData extends Component {
                         value={formElement.config.value}
                         invalid={!formElement.config.valid}
                         shouldValidate={formElement.config.validation}
-                        touched = {formElement.config.touched}
+                        touched={formElement.config.touched}
                         changed={(event) =>
                             this.inputChangedHandler(event, formElement.id)
                         }
                     />
                 ))}
 
-                <Button btnType="Success" disabled={!this.state.formIsValid} clicked={this.orderHandler}>
+                <Button
+                    btnType="Success"
+                    disabled={!this.state.formIsValid}
+                    clicked={this.orderHandler}
+                >
                     ORDER
                 </Button>
             </form>
         );
         if (this.state.loading) {
             form = <Spinner />;
-        } 
+        }
 
         return (
             <div className={classes.ContactData}>
