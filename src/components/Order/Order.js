@@ -1,5 +1,6 @@
 import React from "react";
 import classes from "./Order.module.css";
+import { initIngredients } from "../../store/actions";
 
 const order = (props) => {
 
@@ -7,13 +8,14 @@ const order = (props) => {
 
     for (let ingredientName in props.ingredients){
         ingredients.push({
+            key: ingredientName,
             name: ingredientName,
             amount: props.ingredients[ingredientName]}
             );
     }
 
     const ingredientOutput = ingredients.map(ig=> {
-    return <span style={{
+    return <span key= {ig.name}style={{
         textTransform:"capitalize",
         display: "inline-block",
         margin: "0 8px",
@@ -25,6 +27,7 @@ const order = (props) => {
 
     return(
     <div className={classes.Order}>
+        {console.log(props)}
         <p>Ingredients: {ingredientOutput} </p>
         <p>
             Price: <strong>USD {Number.parseFloat(props.price.toFixed(2))}</strong>
