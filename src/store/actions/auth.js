@@ -23,9 +23,18 @@ export const authFail = (error) => {
     };
 };
 
+
+export const logout = () => {
+    return {
+        type: actionTypes.AUTH_LOGOUT
+    }
+};
+
 export const checkOutTimeout = (expirationTime) => {
     return dispatch => {
-
+        setTimeout(()=> {
+            dispatch(logout())
+        }, expirationTime * 1000)
     }
 };
 

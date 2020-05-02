@@ -1,6 +1,5 @@
-import React from "react";
+    import React from "react";
 import classes from "./Order.module.css";
-import { initIngredients } from "../../store/actions";
 
 const order = (props) => {
 
