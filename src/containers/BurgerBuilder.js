@@ -96,7 +96,6 @@ class BurgerBuilder extends Component {
             orderSummary = <Spinner/>;
         }
 
-        console.log(this.state.purchasing);
         return (
             <Aux>
                 <Modal
